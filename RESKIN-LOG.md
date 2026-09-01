@@ -18,11 +18,11 @@ in order) and visually (every rendered page inspected) before delivery.
 | 4 | Health and Safety Policy V2.2 | Policy | `Health_and_Safety_Policy_reskinned.docx` |
 | 5 | Protective Security Policy V2.0 | Policy | `Protective_Security_Policy_reskinned.docx` |
 | 6 | Body Worn Camera User Guidelines V3.0 | Process | `Body_Worn_Camera_User_Guidelines_reskinned.docx` |
-| 7 | City of Port Phillip Governance Framework | Framework | `City_of_Port_Phillip_Governance_Framework_reskinned.docx` |
+| 7 | City of Port Phillip Governance Framework | Framework | `City_of_Port_Phillip_Governance_Framework_reskinned.docx` (portrait); landscape variant kept as `..._landscape.docx` |
 
 ## Method
 
-For instruments 1–6 the template package is the base: its cover, City of Port
+For every instrument the template package is the base: its cover, City of Port
 Phillip contact page, Document Governance and Document History tables and
 Table of Contents are kept, and the instrument's content is poured in, restyled
 onto the template's Heading 1/2/3 and its own automatic numbering, bullet list
@@ -32,7 +32,9 @@ Removed in every case, as the templates instruct: the template-instructions
 table, the red guidance paragraphs, the Copilot prompt boxes and the unused
 placeholder sections.
 
-Instrument 7 inverts this — see below.
+Instrument 7 was first delivered the opposite way round (source as base,
+keeping its landscape design — retained as `..._landscape.docx`), then redone
+on the requester's direction as the standard portrait reflow described below.
 
 Common transformations:
 
@@ -103,26 +105,44 @@ plain text and was itself styled as a numbered heading, so it occupied section
 renumbers 1–15 with Purpose as 1. Lists used the *List Bullet* style but that
 style carried no numbering definition, so they rendered as plain lines.
 
-**7 — City of Port Phillip Governance Framework → Framework.** Handled the
-opposite way round, on the requester's instruction. The source is a designed
-56-page **landscape** publication — 27 sections driving two-column layouts
-whose left/right pairings carry meaning, ~20 inline images and infographics,
-running section banners — while the template is portrait single-column. Rather
-than reflow it, the source document is the base package and the template's
-styling is applied over it:
+**7 — City of Port Phillip Governance Framework → Framework.** The source is a
+designed 56-page **landscape** publication: 27 sections driving two-column
+layouts, floating infographics, running section banners. First delivered with
+the source as the base and the template styled over it, preserving that whole
+landscape design (kept as `..._landscape.docx`); then redone as the standard
+portrait reflow on the requester's direction — the delivered
+`..._reskinned.docx`:
 
-- template style definitions for every shared style, plus its theme;
-- the source's teal family (`2EBBB8`, `008080`, `009999`, `00A3AD` and others)
-  mapped to the template's magenta/plum, with 170 direct colour overrides
-  stripped from heading runs;
-- the template's Document Governance and Document History tables added, in
-  their own single-column section so they do not disrupt the two-column
-  contents page;
-- the template's automatic heading numbering stripped on import, because this
-  framework uses named sections rather than numbered clauses.
-
-Preserved: landscape orientation, all sections and columns, all 20 images and
-312 drawings, and all 179 headings at their original levels.
+- The landscape sections and two-column layouts dissolve into a single-column
+  portrait flow in reading order; the author's own styles travel with each
+  paragraph, so all 161 headings keep their exact levels, unnumbered (this
+  framework uses named sections, so the template's automatic clause numbering
+  is stripped from the heading styles).
+- Her curated Contents control is kept as a live Word ToC — same 44 entries,
+  hyperlinks and bookmarks intact — with its cached page numbers re-pointed at
+  the portrait pagination and its tab stop re-cut for the portrait width. The
+  file still refreshes fields on open.
+- The 29×10 Principles Matrix cannot survive a portrait squeeze, so its section
+  sits on **landscape pages** at the table's own width and its source 10pt type
+  (the template's 11pt Normal made the header words wrap mid-word), with the
+  header row repeating and recoloured to the template magenta.
+- The source's floating shapes were positioned for landscape spreads and either
+  vanished off the portrait page (all 24 "OUR PRINCIPLES" side badges) or
+  landed on top of the reflowed text (the Governance Framework Diagram, the
+  principles wheel, the employee-responsibilities box). Each was re-seated: the
+  badges float right of their sections with text wrapping beside them, the
+  five-shape diagram is restacked — house centred, the two arrow-callouts
+  converging beneath it — and the wheel and box sit centred in the flow,
+  reserving their own space.
+- 72 body paragraphs carried direct right indents of 3,000–5,200 twips — the
+  author's way of fitting text into the narrow landscape columns. They pinch
+  portrait paragraphs to half width for no reason, so indents above 700 twips
+  were dropped.
+- The teal family (`2EBBB8`, `009999`, `00A3AD`, the shapes' `5DA5AF` and
+  others) maps to the template magenta in both ordinary text and DrawingML
+  shape fills; heading runs drop their direct colours so the template styles
+  govern. The VML duplicates of reworked shapes were removed so a repositioned
+  shape cannot disagree with a stale fallback.
 
 ## Known outstanding items
 
@@ -137,13 +157,15 @@ Preserved: landscape orientation, all sections and columns, all 20 images and
   still template placeholders. In the Building Safety & Security Committee row,
   one sentence is split across bullets mid-sentence — faithful to the source,
   but likely an editorial error worth fixing.
-- **7 — Governance Framework:** the running header banners are white text on
-  background images, so their teal is baked into the artwork and cannot be
-  recoloured without the source graphics; likewise the governance wheel and
-  principle icons. Footers keep the source's "Page X of 58" rather than the
-  template's "Title | Version" format. The cover remains the source
-  photograph, since the template's cover art is portrait. Governance and
-  history tables are blank placeholders — the source had none.
+- **7 — Governance Framework (portrait):** no version is stated anywhere in
+  the source, so the cover keeps the template's `Version X.X` placeholder; the
+  Document Governance and Document History tables are blank placeholders — the
+  source had none. The governance wheel and the principle icons are raster
+  artwork, so their multicoloured palette cannot be recoloured to the
+  template's magenta. Where a landscape spread paired text and imagery
+  side-by-side, the portrait flow reads left column then right column. In the
+  landscape variant (`..._landscape.docx`) the earlier caveats stand: banner
+  teal baked into artwork, source footers and cover.
 
 ## Related change outside the documents
 
@@ -164,7 +186,15 @@ instrument and target template. Each is self-contained: it unpacks the
 template and source `.docx`, performs the transformation, and writes the
 result. `_outline.py` dumps a readable structure of any `word/document.xml`
 (styles, numbering levels, table shapes) and was the main analysis tool;
-`_verify_framework.py` is the fidelity checker used on instrument 7.
+`_verify_framework.py` is the fidelity checker used on the landscape
+framework build.
+
+The portrait framework redo is `07b_governance_framework_portrait.py`, a
+two-pass build: build, render, harvest the ToC page numbers that LibreOffice
+resolves from the PAGEREF bookmarks (`07b_harvest_toc_pages.py` writes
+`toc_pages8.json`), then build again so the cached numbers match the portrait
+pagination. `07b_verify_portrait.py` is its fidelity checker: every source
+body block present in order, ToC entries and heading levels identical.
 
 The scripts expect `template_unpacked/` and `instrument_unpacked/` beside them,
 so they are a record of exactly what was done rather than a turnkey pipeline.
