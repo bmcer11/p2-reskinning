@@ -93,6 +93,25 @@ def make_ppr(props):
     return ppr
 
 
+def keep_with_next(p):
+    """Give an already-built paragraph keepNext, in schema position."""
+    ppr = p.find('w:pPr', ns)
+    if ppr is None:
+        ppr = E('w:pPr')
+        p.insert(0, ppr)
+    if ppr.find('w:keepNext', ns) is not None:
+        return
+    k = E('w:keepNext')
+    st = ppr.find('w:pStyle', ns)
+    if st is not None:
+        st.addnext(k)
+    else:
+        ppr.insert(0, k)
+
+
+LEAD_IN_TARGETS = ('table', 'b', 'alpha', 'callout')
+
+
 TOKEN = re.compile(r'\[([^\]]+)\]\(([^)\s]+)\)|\{fn:(\d+)\}|\*\*|//|__')
 
 
@@ -312,7 +331,10 @@ class Builder:
 
     def table(self, spec):
         """spec: cols=[widths], header=[...] (optional), rows=[[cell,...],...],
-        jc={col: 'center'}. A cell is a string or a list of strings / ('b', [items])."""
+        jc={col: 'center'}. A cell is a string or a list of strings / ('b', [items]).
+        keep_together=True keeps a short table on one page with its heading: without
+        it, LibreOffice 24.2 can drop the rows of a cantSplit table that breaks
+        between rows just above a Heading 1 (the PID process overview lost 6 of 7)."""
         cols = spec['cols']
         assert sum(cols) == TEXT_W, (sum(cols), cols)
         tbl = E('w:tbl')
@@ -337,12 +359,16 @@ class Builder:
             for ci, h in enumerate(spec['header']):
                 tr.append(self._cell(h, cols[ci], header=True))
             tbl.append(tr)
-        for row in spec['rows']:
+        rows = spec['rows']
+        for ri, row in enumerate(rows):
             tr = E('w:tr')
             if spec.get('cant_split', True):
                 tr.append(E('w:trPr', None, E('w:cantSplit')))
             for ci, c in enumerate(row):
                 tr.append(self._cell(c, cols[ci], jc=jcs.get(ci)))
+            if spec.get('keep_together') and ri < len(rows) - 1:
+                for p in tr.iter(q('w:p')):
+                    keep_with_next(p)
             tbl.append(tr)
         return tbl
 
@@ -412,14 +438,18 @@ class Builder:
 
     def render(self, blocks):
         out = []
-        for blk in blocks:
+        for bi, blk in enumerate(blocks):
             kind = blk[0]
+            nxt_kind = blocks[bi + 1][0] if bi + 1 < len(blocks) else None
             if kind == 'h1':
                 out.append(self.heading(blk[1], 1, blk[2] if len(blk) > 2 else None))
             elif kind == 'h2':
                 out.append(self.heading(blk[1], 2))
             elif kind == 'p':
-                out.append(self.para(blk[1]))
+                p = self.para(blk[1])
+                if nxt_kind in LEAD_IN_TARGETS and blk[1].rstrip().endswith(':'):
+                    keep_with_next(p)           # a lead-in never ends a page alone
+                out.append(p)
             elif kind == 'pk':                       # run-in sub-heading, kept with next
                 out.append(self.para(blk[1], {'keepNext': None, 'spacing': {'w:before': 200, 'w:after': 80}}))
             elif kind == 'b':

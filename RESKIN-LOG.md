@@ -182,6 +182,22 @@ set "update fields on open", so intranet readers don't get Word's update-fields
 prompt. If Word paginates a heading onto a different page, update the ToC once
 before upload.
 
+**8 and 9: layout fix (follow-up).** A render check of every paragraph found
+that LibreOffice dropped rows 2–7 of the PID Procedure's "Overview of the
+disclosure process" table: a table of can't-split rows breaking between rows
+just above a Heading 1 sends LibreOffice into a layout loop it abandons,
+leaving the rows unrendered (the rows were intact in the file). The ToC
+page numbers had been harvested from that broken layout, so sections 11–17
+read one page early. Fix: that table is kept on one page with its heading, and
+any lead-in paragraph ending in ":" is kept with the table or list it
+introduces (it had left "…two-step process:" alone at the foot of a page).
+Both files now render every paragraph; the PID ToC was re-baked (sections
+11–17 move one page later) and the Fraud ToC is unchanged. Text is untouched.
+The builder emits these rules itself now; because the template package was
+not available for a rebuild, `08_09_layout_patch.py` applied the same rules to
+the built files, and a builder smoke test confirmed it produces the identical
+keep-with-next markup.
+
 ## Known outstanding items
 
 - **3 — Councillor Briefing Guidelines:** version number still the template
@@ -268,6 +284,8 @@ Instruments 8 and 9 (PDF sources) use `_pdf_reskin_lib.py`, run through
 `_build_and_paginate.py` with `RESKIN_WORK` pointing at a folder that holds the
 unpacked template as `tpl/` (and, for 8, the extracted flowchart
 `flow-002.png`); `_verify_pdf_reskin.py` is their fidelity check.
+`08_09_layout_patch.py <in.docx> <out.docx>` applies the layout fix above to
+an already-built file and re-bakes its ToC page numbers from a fresh render.
 
 The scripts expect `template_unpacked/` and `instrument_unpacked/` beside them,
 so they are a record of exactly what was done rather than a turnkey pipeline.

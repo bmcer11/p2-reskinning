@@ -116,6 +116,7 @@ OUTCOME = {
 PROCESS_OVERVIEW = {
     'cols': [900, 5126, 3000],
     'header': ['Step', 'Action', 'Responsibility'],
+    'keep_together': True,
     'rows': [
         ['1', 'Disclosure is received by Council (via person authorised to receive a public interest disclosure)', 'Receiving person'],
         ['2', 'Disclosure is forwarded to the Public Interest Disclosures Coordinator', 'Receiving person'],
